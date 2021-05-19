@@ -14,20 +14,23 @@
   async function getI18n(){
     let param = {
       lang: 'zh_CN',
-      textId: 'mdc'
+      textId: 'age'
     }
     let iDB = await getFromIndexedDB(param);
+    console.log('indexDB:',iDB);
     // indexDB()不存在时
-    if(!iDB.length){
-      getFromHttp(param);
+    if(!Object.keys(iDB).length){
+      iDB = await getFromHttp(param);
     }
-
+    console.log('mongoDB:',iDB);
   }
+
   async function getFromIndexedDB(param){
     let db = new Dexie('MDC');
     db.version(1).stores({
       i18: 'textId,lang,text'
     });
+    //TODO: param.textId is Array situation
     let result = await db.i18.where(param).toArray();
     let obj = {}
     result.forEach(it => {
@@ -35,17 +38,17 @@
     })
     return obj
   }
+
   function saveToIndexedDB(data){
     let db = new Dexie('MDC')
     db.version(1).stores({
       i18: 'textId,lang,text'
     })
-    data.forEach(d => {
-      db.i18.put(d)
-    })
+    db.i18.bulkPut(data)
   }
+  
   function getFromHttp(param){
-    fetch('http://localhost:8081/getI18n',{
+    return fetch('http://localhost:8081/getI18n',{
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -57,6 +60,11 @@
       }
     }).then(result => {
       saveToIndexedDB(result.data);
+      let obj = {};
+      result.data.forEach(it => {
+        obj[it.textId] = it.text;
+      })
+      return obj;
     })
   }
 

@@ -1,0 +1,32 @@
+[
+  {
+    "textId": "type",
+    "lang": "zh_CN",
+    "text": "类型"
+  },
+  {
+    "textId": "type",
+    "lang": "en_US",
+    "text": "Type"
+  },
+  {
+    "textId": "name",
+    "lang": "zh_CN",
+    "text": "名字"
+  },
+  {
+    "textId": "name",
+    "lang": "en_US",
+    "text": "Name"
+  },
+  {
+    "textId": "age",
+    "lang": "zh_CN",
+    "text": "年龄"
+  },
+  {
+    "textId": "age",
+    "lang": "en_US",
+    "text": "Age"
+  },
+]
