@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>test</title>
+</head>
+<body>
+    
+</body>
+<script src="./plugin/dexie.js"></script>
+<script >
+  async function getI18n(){
+    let param = {
+      lang: 'zh_CN',
+      textId: 'mdc'
+    }
+    let iDB = await getFromIndexedDB(param);
+    // indexDB()不存在时
+    if(!iDB.length){
+      getFromHttp(param);
+    }
+
+  }
+  async function getFromIndexedDB(param){
+    let db = new Dexie('MDC');
+    db.version(1).stores({
+      i18: 'textId,lang,text'
+    });
+    let result = await db.i18.where(param).toArray();
+    let obj = {}
+    result.forEach(it => {
+      obj[it.textId] = it.text;
+    })
+    return obj
+  }
+  function saveToIndexedDB(data){
+    let db = new Dexie('MDC')
+    db.version(1).stores({
+      i18: 'textId,lang,text'
+    })
+    data.forEach(d => {
+      db.i18.put(d)
+    })
+  }
+  function getFromHttp(param){
+    fetch('http://localhost:8081/getI18n',{
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(param)
+    }).then(res => {
+      if(res.ok){
+        return res.json();
+      }
+    }).then(result => {
+      saveToIndexedDB(result.data);
+    })
+  }
+
+  getI18n();
+</script>
+</html>
