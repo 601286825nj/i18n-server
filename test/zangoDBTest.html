@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZangoDB Test</title>
+</head>
+
+<body>
+
+</body>
+<script src="./plugin/zangodb.min.js"></script>
+<script>
+  /**没文档*/
+  function getFromIndexedDB() {
+    let db = new zango.Db('MDC', { i18: ['textId', 'lang'] });
+    let table = db.collection('i18');
+    let param = {
+      lang: 'zh_CN',
+      textId: {
+        $in: ['name', 'age']
+      }
+    }
+    debugger
+    let res = table.find(param);
+    res.forEach(data => {
+      console.log(data);
+    })
+  }
+  getFromIndexedDB();
+</script>
+
+</html>

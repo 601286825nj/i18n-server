@@ -19,5 +19,5 @@ export async function getData({textId,lang}){
       $in: Array.isArray(lang) ? lang: [lang]
     }
   }
-  return table.find(query).toArray()
+  return table.find(query).toArray();
 }

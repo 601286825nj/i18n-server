@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Local Forage Test</title>
+</head>
+<body>
+
+</body>
+<script src="./plugin/localForage.min.js"></script>
+<script>
+  // 不能查找复合索引？
+  function getFromIndexedDB(){
+    localforage.config({
+      driver: localforage.INDEXEDDB,
+      name: 'MDC',
+      storeName: 'i18'
+    });
+    // TODO: 待验证复合索引
+    localforage.getItem('name').then((val) => {
+      console.log('val',val);
+    });
+  }
+  getFromIndexedDB();
+</script>
+</html>

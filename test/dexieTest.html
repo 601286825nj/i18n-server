@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dexie Test</title>
+</head>
+
+<body>
+
+</body>
+<script src="./plugin/dexie.js"></script>
+<script type="module">
+  import { getFromHttp } from './fetchI18n.js';
+  async function getI18n() {
+    let param = {
+      lang: 'zh_CN',
+      textId: ['name','type']
+    }
+    let iDB = await getFromIndexedDB(param);
+    console.log('indexDB:', iDB);
+    // indexDB()不存在时
+    // if (!Object.keys(iDB).length) {
+      let result = await getFromHttp(param)
+      saveToIndexedDB(result.data);
+      iDB = {};
+      result.data.forEach(it => {
+        iDB[it.textId] = it.text;
+      })
+      console.log('mongoDB:', iDB);
+    // }
+  }
+
+  async function getFromIndexedDB(param) {
+    let db = new Dexie('MDC');
+    db.version(1).stores({
+      i18: '[textId+lang]'
+    });
+    // 复合查询
+    let cons = param.textId.map(it => [it,param.lang]);// [['name','zh_CN'],['type','zh_CN']]
+    let result = await db.i18.where('[textId+lang]').anyOf(cons).toArray();
+    let obj = {}
+    result.forEach(it => {
+      obj[it.textId] = it.text;
+    })
+    return obj;
+  }
+
+  function saveToIndexedDB(data) {
+    let db = new Dexie('MDC')
+    db.version(1).stores({
+      i18: '[textId+lang]'
+    })
+    db.i18.bulkPut(data);
+  }
+
+
+
+  getI18n();
+</script>
+
+</html>
